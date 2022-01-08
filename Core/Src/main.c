@@ -119,7 +119,6 @@ void readFIJO(){
 	HAL_UART_Receive(&huart2, &check, 1, HAL_MAX_DELAY);
 
 	if(check == STARTBYTE){
-
 		//Receive all the message bytes in buf
 		for(uint16_t i = 1; i < sizeof(struct fijo); i++)
 		{
