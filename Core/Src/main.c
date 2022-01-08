@@ -58,9 +58,6 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-//Creates the fijo and foji struct
-//The reason there are 2 different gpsCoordinates structs is to minimize the size of the fijo struct
 struct gpsCoordinatesFOJI{
 	double lattitude;
 	double longtitude;
@@ -78,14 +75,14 @@ struct eulerAnglesOfPlane{
 	float roll;
 };
 
-//Should be 37 bytes but because of padding its really 48 bytes
+//37 ig its acc 48
  struct foji{
 	uint8_t start;
 	struct gpsCoordinatesFOJI gpsCoord;
 	struct eulerAnglesOfPlane anglesOfPlane;
 };
 
-//Should be 20 bytes but because of padding its really 24 bytes
+ //20 ig its acc 24
 struct fijo{
 	 uint8_t start;
 	_Bool takeoffCommand;
@@ -94,47 +91,177 @@ struct fijo{
 	struct gpsCoordinatesFIJO gpsCoord;
 };
 
-const uint8_t STARTBYTE = 0x24;
-
 void sendFOJI(){
-	//Get out from telemetry manager
-	struct foji out;
+	struct foji inTest;
+	inTest.start = 0x24; //$
+	inTest.gpsCoord.lattitude = 11.11;
+	inTest.gpsCoord.longtitude = 22.22;
+	inTest.gpsCoord.altitude = 33.33;
+	inTest.anglesOfPlane.yaw = 44.44;
+	inTest.anglesOfPlane.pitch = 55.55;
+	inTest.anglesOfPlane.roll = 66.66;
 
-	HAL_UART_Transmit(&huart2, &out, sizeof(struct foji), HAL_MAX_DELAY);
+//	char test = {0xc5,0x07,0x00,0x08};
+//	HAL_UART_Transmit(&huart2, test, sizeof(test), HAL_MAX_DELAY);
+
+//	HAL_UART_Transmit(&huart2, &inTest, sizeof(struct foji), HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2, (uint8_t)sizeof(struct foji), sizeof(sizeof(struct foji)), HAL_MAX_DELAY);
+
+//	HAL_UART_Transmit(&huart2, "TEST ", sizeof("TEST "), HAL_MAX_DELAY);
+
+//	uint8_t buf[sizeof(struct fijo)];
+//
+//	for(uint16_t i = 0; i < sizeof(struct foji); i++)
+//	{
+////		if(HAL_UART_Receive(&huart2, &buf[i], 1, HAL_MAX_DELAY) != HAL_OK)
+////		{
+////			break; //Error receiving data
+////		}
+//		HAL_UART_Receive(&huart2, &buf[i], 1, HAL_MAX_DELAY);
+////		if(i == 1){
+////			struct foji *tmp = (struct foji*)buf;
+////			if(tmp->start != 0x24){
+////				break;
+////			}
+////		}
+//	}
+//	struct foji *ptr = (struct foji*)buf;
+////	struct foji *ptr = (struct foji*)(uint8_t*)&inTest;
+//
+////	char buffer[sizeof(struct foji)+1];
+////	memcpy(buffer, &inTest, sizeof(struct foji));
+////	HAL_UART_Transmit(&huart2, ptr->gpsCoord.longtitude, sizeof(ptr->gpsCoord.longtitude), HAL_MAX_DELAY);
+////	HAL_UART_Receive(&huart2, (uint8_t*)&inTest, sizeof(struct foji), HAL_MAX_DELAY);
+//	char lon[19];
+//	gcvt(ptr->gpsCoord.longtitude, 16, lon);
+//	HAL_UART_Transmit(&huart2, lon, strlen(lon), 1000);
+//	strcpy(lon,"");
+
+//	char lon[19];
+////	double x = sizeof(inTest.start) + sizeof(inTest.anglesOfPlane) + sizeof(inTest.gpsCoord);
+//	double x = sizeof(struct fijo);
+//	gcvt(x, 6, lon);
+////	char lon = x + '0';
+//	HAL_UART_Transmit(&huart2, lon, strlen(lon), 1000);
+////	strcpy(lon,"");
+
+
+
+//	uint8_t buf[] = {'$', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\xa3', 's', '~', '\x8a', '\xe3', '8', '&', '@', '.', '\xc9', '\x01', '\xbb', '\x9a', '8','6', '@', 'E', ',', 'b', '\xd8', 'a', '\xaa', '@', '@', '\xb3', '\xc3', '1', 'B', 'V', '4', '^', 'B', '}', 'R', '\x85', 'B', 'a', '\x06', '\x00', '\x08'};
+	uint8_t buf[] = {'$', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\xb8', '\x1e', '\x85', '\xeb', 'Q', '8', '&', '@', '\xb8',
+			'\x1e', '\x85', '\xeb', 'Q', '8','6', '@', '\n','\xd7','\xa3', 'p','=', '\xaa','@','@', '\x8f', '\xc2', '1', 'B','3',
+			'3', '^', 'B', '\xec', 'Q', '\x85', 'B', 'a','\x06', '\x00','\x08'};
+//	uint8_t buf[] = {0x24, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xa3, 's', '~', 0x8a, 0xe3, '8', '&', '@', '.', 0xc9, 0x01, 0xbb, 0x9a, '8','6', '@', 'E', ',', 'b', 0xd8, 'a', 0xaa, '@', '@', 0xb3, 0xc3, '1', 'B', 'V', '4', '^', 'B', '}', 'R', 0x85, 'B', 'a', 0x06, 0x00, 0x08};
+
+//	for(uint16_t i = 0; i < sizeof(struct foji); i++)
+//	{
+////		if(HAL_UART_Receive(&huart2, &buf[i], 1, HAL_MAX_DELAY) != HAL_OK)
+////		{
+////			break; //Error receiving data
+////		}
+//		HAL_UART_Receive(&huart2, &buf[i], 1, HAL_MAX_DELAY);
+////		if(i == 1){
+////			struct foji *tmp = (struct foji*)buf;
+////			if(tmp->start != 0x24){
+////				break;
+////			}
+////		}
+//	}
+	struct foji *ptr = (struct foji*)buf;
+//	struct foji *ptr = (struct foji*)(uint8_t*)&inTest;
+
+//	char buffer[sizeof(struct foji)+1];
+//	memcpy(buffer, &inTest, sizeof(struct foji));
+//	HAL_UART_Transmit(&huart2, ptr->gpsCoord.longtitude, sizeof(ptr->gpsCoord.longtitude), HAL_MAX_DELAY);
+//	HAL_UART_Receive(&huart2, (uint8_t*)&inTest, sizeof(struct foji), HAL_MAX_DELAY);
+	char lon[19];
+	HAL_UART_Transmit(&huart2, &ptr->start, sizeof(ptr->start), 1000);
+//
+	gcvt(ptr->gpsCoord.lattitude, 16, lon);
+	HAL_UART_Transmit(&huart2, lon, strlen(lon), 1000);
+	strcpy(lon,"");
+
+	gcvt(ptr->gpsCoord.longtitude, 16, lon);
+	HAL_UART_Transmit(&huart2, lon, strlen(lon), 1000);
+	strcpy(lon,"");
+
+	char lon2[19];
+	gcvt(ptr->gpsCoord.altitude, 16, lon2);
+	HAL_UART_Transmit(&huart2, lon2, strlen(lon2), 1000);
+	strcpy(lon2,"");
+
+	gcvt(ptr->anglesOfPlane.yaw, 4, lon);
+	HAL_UART_Transmit(&huart2, lon, strlen(lon), 1000);
+	strcpy(lon,"");
+
+	gcvt(ptr->anglesOfPlane.pitch, 4, lon);
+	HAL_UART_Transmit(&huart2, lon, strlen(lon), 1000);
+	strcpy(lon,"");
+
+	gcvt(ptr->anglesOfPlane.roll, 4, lon);
+	HAL_UART_Transmit(&huart2, lon, strlen(lon), 1000);
+	strcpy(lon,"");
+
+
 
 }
 
 void readFIJO(){
-	//Creates byte array
 	uint8_t buf[sizeof(struct fijo)];
-
-	//Initializes starting byte
-	buf[0] = STARTBYTE;
-
+	buf[0] = 0x24;
 	struct fijo in;
-	in.start = STARTBYTE;
-
-	//Receives a byte to check if its the same as STARTBYTE
-	uint8_t check;
-	HAL_UART_Receive(&huart2, &check, 1, HAL_MAX_DELAY);
-
-	if(check == STARTBYTE){
-		//Receive all the message bytes in buf
+	in.start = 0x24;
+//	in.detectFlag = 1;
+//	in.qrScanFlag = 1;
+//	in.takeoffCommand = 1;
+//	in.gpsCoord.lattitude = 11.11;
+//	in.gpsCoord.longtitude = 22.22;
+//	HAL_UART_Transmit(&huart2, &in, sizeof(struct fijo), HAL_MAX_DELAY);
+	uint8_t dummy;
+	HAL_UART_Receive(&huart2, &dummy, 1, HAL_MAX_DELAY);
+	if(dummy == 0x24){
 		for(uint16_t i = 1; i < sizeof(struct fijo); i++)
 		{
+	//		if(HAL_UART_Receive(&huart2, &buf[i], 1, HAL_MAX_DELAY) != HAL_OK)
+	//		{
+	//			break; //Error receiving data
+	//		}
 			HAL_UART_Receive(&huart2, &buf[i], 1, HAL_MAX_DELAY);
+	//		if(i == 1){
+	//			struct fijo *tmp = (struct fijo*)buf;
+	//			if(tmp->start != 0x24){
+	//				break;
+	//			}
+	//		}
 		}
 
-		//Convert the byte array into an fijo struct
 		struct fijo *ptr = (struct fijo*)buf;
 		in.takeoffCommand = ptr->takeoffCommand;
 		in.qrScanFlag = ptr->qrScanFlag;
 		in.detectFlag = ptr->detectFlag;
 		in.gpsCoord.lattitude = ptr->gpsCoord.lattitude;
 		in.gpsCoord.longtitude = ptr->gpsCoord.longtitude;
+//		HAL_UART_Transmit(&huart2, &in, sizeof(struct fijo), HAL_MAX_DELAY);
 
-		//Send in into telemetry manager
+
+		char lon[19];
+		HAL_UART_Transmit(&huart2, &ptr->start, sizeof(ptr->start), 1000);
+	//
+		gcvt(ptr->gpsCoord.lattitude, 16, lon);
+		HAL_UART_Transmit(&huart2, lon, strlen(lon), 1000);
+		strcpy(lon,"");
+
+		gcvt(ptr->gpsCoord.longtitude, 16, lon);
+		HAL_UART_Transmit(&huart2, lon, strlen(lon), 1000);
+		strcpy(lon,"");
+
+
 	}
+
+
+//	HAL_UART_Receive(&huart2, &buf[0], 1, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2, buf, 1, HAL_MAX_DELAY);
+
 }
 /* USER CODE END 0 */
 
@@ -173,13 +300,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
+  //	  sendFOJI();
+    while (1)
+    {
+      /* USER CODE END WHILE */
 
-    /* USER CODE BEGIN 3 */
-	  sendFOJI();
-	  readFIJO();
+      /* USER CODE BEGIN 3 */
+    readFIJO();
   }
   /* USER CODE END 3 */
 }
